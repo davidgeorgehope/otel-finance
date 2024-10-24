@@ -13,7 +13,7 @@ HEADERS = {
 def load():
     # Import dashboards and saved objects (existing code)
     # Load the Nginx integration configuration from the JSON file
-    with open('resources/nginx_integration.json', 'r') as config_file:
+    with open('integrations/nginx_integration.json', 'r') as config_file:
         config = json.load(config_file)
 
     # Create agent policy

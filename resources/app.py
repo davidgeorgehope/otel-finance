@@ -8,6 +8,8 @@ import kibana
 import slo
 import context
 import assistant
+import integrations
+import enroll_elastic_agent
 
 app = Flask(__name__)
 
@@ -26,8 +28,9 @@ def init():
     assistant.load()
     context.load()
     kibana.load()
+    integrations.load()
     slo.load()
-
+    enroll_elastic_agent.install_elastic_agent(enroll_elastic_agent.get_enrollment_api_keys())
 def maintenance_loop():
     aliases_created = False
     while True:

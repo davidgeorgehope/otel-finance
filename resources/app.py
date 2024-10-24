@@ -30,7 +30,7 @@ def init():
     kibana.load()
     integrations.load()
     slo.load()
-    enroll_elastic_agent.install_elastic_agent(enroll_elastic_agent.get_enrollment_api_keys())
+    enroll_elastic_agent.install_elastic_agent()
 def maintenance_loop():
     aliases_created = False
     while True:

@@ -10,7 +10,7 @@ ELASTIC_USER = os.environ.get('ELASTICSEARCH_USER', 'elastic')
 ELASTIC_PASSWORD = os.environ.get('ELASTICSEARCH_PASSWORD', 'changeme')
 ELASTIC_AGENT_DOWNLOAD_URL = os.environ.get(
     'ELASTIC_AGENT_DOWNLOAD_URL',
-    'https://artifacts.elastic.co/downloads/beats/elastic-agent/elastic-agent-8.9.2-linux-x86_64.tar.gz'
+    'https://artifacts.elastic.co/downloads/beats/elastic-agent/elastic-agent-8.15.2-linux-x86_64.tar.gz'
 )
 ELASTIC_AGENT_INSTALL_DIR = os.environ.get('ELASTIC_AGENT_INSTALL_DIR', '/opt/Elastic/Agent')
 AGENT_POLICY_NAME = 'Agent policy 1'  # Name from your integration JSON
@@ -99,14 +99,17 @@ def create_enrollment_api_key_for_policy(policy_id):
 
 def download_and_install_elastic_agent(enrollment_token):
     """Download and install the Elastic Agent using the enrollment token."""
+    # Extract the tarball name from the download URL
+    tarball_url = ELASTIC_AGENT_DOWNLOAD_URL
+    tarball_name = os.path.basename(tarball_url)
+
     # Download the Elastic Agent
-    agent_tarball = 'elastic-agent.tar.gz'
     download_command = [
         'curl',
         '-L',
-        ELASTIC_AGENT_DOWNLOAD_URL,
+        tarball_url,
         '-o',
-        agent_tarball
+        tarball_name
     ]
     print("Downloading Elastic Agent...")
     subprocess.run(download_command, check=True)
@@ -115,15 +118,19 @@ def download_and_install_elastic_agent(enrollment_token):
     extract_command = [
         'tar',
         '-xzf',
-        agent_tarball
+        tarball_name
     ]
     print("Extracting Elastic Agent...")
     subprocess.run(extract_command, check=True)
 
+    # Determine the extracted directory name (remove .tar.gz extension)
+    extracted_dir = tarball_name.replace('.tar.gz', '')
+
     # Install the Agent
     print("Installing Elastic Agent...")
+    install_script_path = os.path.join(extracted_dir, 'install.sh')
     install_command = [
-        './elastic-agent/install.sh',
+        install_script_path,
         '--url', KIBANA_URL,
         '--enrollment-token', enrollment_token,
         '--insecure'  # Remove this if SSL is properly configured

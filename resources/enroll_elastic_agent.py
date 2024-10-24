@@ -6,6 +6,7 @@ import base64
 
 # Set environment variables or replace with your own values
 KIBANA_URL = os.environ.get('KIBANA_URL', 'http://localhost:5601')
+FLEET_URL = os.environ.get('FLEET_URL', 'http://localhost:8220')
 ELASTIC_USER = os.environ.get('ELASTICSEARCH_USER', 'elastic')
 ELASTIC_PASSWORD = os.environ.get('ELASTICSEARCH_PASSWORD', 'changeme')
 ELASTIC_AGENT_DOWNLOAD_URL = os.environ.get(
@@ -99,6 +100,9 @@ def create_enrollment_api_key_for_policy(policy_id):
 
 def download_and_install_elastic_agent(enrollment_token):
     """Download and install the Elastic Agent using the enrollment token."""
+    import os
+    import subprocess
+
     # Extract the tarball name from the download URL
     tarball_url = ELASTIC_AGENT_DOWNLOAD_URL
     tarball_name = os.path.basename(tarball_url)
@@ -117,7 +121,7 @@ def download_and_install_elastic_agent(enrollment_token):
     # Extract the tarball
     extract_command = [
         'tar',
-        '-xzf',
+        'xzf',
         tarball_name
     ]
     print("Extracting Elastic Agent...")
@@ -126,16 +130,27 @@ def download_and_install_elastic_agent(enrollment_token):
     # Determine the extracted directory name (remove .tar.gz extension)
     extracted_dir = tarball_name.replace('.tar.gz', '')
 
+    # Change to the extracted directory
+    os.chdir(extracted_dir)
+
     # Install the Agent
     print("Installing Elastic Agent...")
-    install_script_path = os.path.join(extracted_dir, 'install.sh')
     install_command = [
-        install_script_path,
-        '--url', KIBANA_URL,
+        'sudo',  # Add 'sudo' if root permissions are required
+        './elastic-agent',
+        'install',
+        '--url', FLEET_URL,
         '--enrollment-token', enrollment_token,
         '--insecure'  # Remove this if SSL is properly configured
     ]
     subprocess.run(install_command, check=True)
+
+    # Go back to the original directory
+    os.chdir('..')
+
+    # Cleanup
+    print("Cleaning up...")
+    subprocess.run(['rm', '-rf', tarball_name, extracted_dir], check=True)
 
 def install_elastic_agent():
     """Main function to install the Elastic Agent."""

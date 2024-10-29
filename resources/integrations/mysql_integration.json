@@ -1,0 +1,45 @@
+{
+    "agent_policy_name": "Agent policy 1",
+    "package_policy": {
+      "package": {
+        "name": "mysql",
+        "version": "1.25.0"
+      },
+      "name": "mysql-1",
+      "description": "",
+      "namespace": "",
+      "inputs": {
+        "mysql-logfile": {
+          "enabled": true,
+          "streams": {
+            "mysql.error": {
+              "enabled": true,
+              "vars": {
+                "paths": [
+                  "/var/log/mysql/error.log*",
+                  "/var/log/mysql/mysql.log*"
+                ],
+                "tags": [
+                  "mysql-error"
+                ],
+                "preserve_original_event": false
+              }
+            },
+            "mysql.slowlog": {
+              "enabled": true,
+              "vars": {
+                "paths": [
+                  "/var/log/mysql/*-slow.log*",
+                  "/var/lib/mysql/*-slow.log*"
+                ],
+                "tags": [
+                  "mysql-slowlog"
+                ],
+                "preserve_original_event": false
+              }
+            }
+          }
+        }
+      }
+    }
+  }

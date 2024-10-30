@@ -10,37 +10,36 @@ import context
 import assistant
 import integrations
 import enroll_elastic_agent
+import subprocess
+
 
 app = Flask(__name__)
 
-@app.post('/load/ml/trained')
-def load_ml_trained():
-    ml.load_trained()
-    return None
-
-@app.post('/load/ml/anomaly')
-def load_ml_anomaly():
-    ml.load_anomaly()
-    return None
 
 def init():
-    alias.load()
-    assistant.load()
-    context.load()
-    kibana.load()
-    integrations.load()
-    slo.load()
-    enroll_elastic_agent.install_elastic_agent()
-def maintenance_loop():
-    aliases_created = False
-    while True:
-        if not aliases_created:
-            aliases_created = alias.load()
-        time.sleep(10)
+    #assistant.load()
+    #context.load()
+    truncated_logs_script = 'download-s3/download-truncated-logs.sh'
+    full_logs_script = 'download-s3/download-full-logs.sh'
 
-def start_maintenance_thread():
-    thread = threading.Thread(target=maintenance_loop)
-    thread.start()
+    # Set execute permissions on the shell scripts
+    print("Setting execute permissions on shell scripts...")
+    subprocess.run(['chmod', '+x', truncated_logs_script], check=True)
+    subprocess.run(['chmod', '+x', full_logs_script], check=True)
+
+    print("Running download-truncated-logs.sh...")
+    subprocess.run(['bash', truncated_logs_script], check=True)
+
+    integrations.load() #nginx, mysql
+    enroll_elastic_agent.install_elastic_agent()
+    slo.load() 
+    ml.load_integration_jobs()
+    #update ingest pipeline
+    print("Running download-full-logs.sh...")
+    subprocess.run(['bash', full_logs_script], check=True)
+    
+    kibana.load() #dashboards
+    
+
 
 init()
-start_maintenance_thread()

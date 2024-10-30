@@ -128,3 +128,61 @@ def load_anomaly(*, replace=False):
                     client.ml.start_datafeed(datafeed_id=json_job['datafeed_config']['datafeed_id'])
                 except Exception as inst:
                     print(inst)
+
+def load_integration_jobs(config_path="ml-integrations/config.json", replace=True):
+
+    with open(config_path, 'r') as f:
+        config = json.load(f)
+
+    attributes = config.get('attributes', {})
+    jobs = attributes.get('jobs', [])
+    datafeeds = attributes.get('datafeeds', [])
+    query = attributes.get('query', {})
+    default_index_pattern = attributes.get('defaultIndexPattern', 'logs-*')
+
+    es = Elasticsearch(
+        os.environ['ELASTICSEARCH_URL'],
+        basic_auth=(os.environ['ELASTICSEARCH_USER'], os.environ['ELASTICSEARCH_PASSWORD'])
+    )
+
+    # Create ML Jobs
+    for job_entry in jobs:
+        job_id = job_entry['id']
+        job_config = job_entry['config']
+        if replace:
+            try:
+                print(f"Deleting existing job: {job_id}")
+                es.ml.stop_datafeed(datafeed_id=f"datafeed-{job_id}", force=True)
+                es.ml.close_job(job_id=job_id, force=True)
+                es.ml.delete_job(job_id=job_id, force=True)
+            except Exception as e:
+                print(f"Could not delete job {job_id}: {e}")
+
+        try:
+            print(f"Creating job: {job_id}")
+            es.ml.put_job(job_id=job_id, body=job_config)
+            es.ml.open_job(job_id=job_id)
+        except Exception as e:
+            print(f"Error creating job {job_id}: {e}")
+
+    # Create Datafeeds
+    for datafeed_entry in datafeeds:
+        datafeed_id = datafeed_entry.get('id')
+        datafeed_config = datafeed_entry.get('config')
+        datafeed_config['indices'] = [default_index_pattern]
+        if replace:
+            try:
+                print(f"Deleting existing datafeed: {datafeed_id}")
+                es.ml.stop_datafeed(datafeed_id=datafeed_id, force=True)
+                es.ml.delete_datafeed(datafeed_id=datafeed_id, force=True)
+            except Exception as e:
+                print(f"Could not delete datafeed {datafeed_id}: {e}")
+
+        try:
+            print(f"Creating datafeed: {datafeed_id}")
+            es.ml.put_datafeed(datafeed_id=datafeed_id, body=datafeed_config)
+            es.ml.start_datafeed(datafeed_id=datafeed_id)
+        except Exception as e:
+            print(f"Error creating datafeed {datafeed_id}: {e}")
+
+    es.close()

@@ -30,11 +30,14 @@ tar xzf "$FILENAME" -C /var/log --strip-components=3
 
 echo "Adjusting dates in log files..."
 
-# Calculate target dates (last 3 days, excluding today)
-TODAY=$(date +%Y%m%d)
-DAY3=$(date -d "3 days ago" +%Y%m%d)
-DAY2=$(date -d "2 days ago" +%Y%m%d)
-DAY1=$(date -d "1 day ago" +%Y%m%d)
+# Calculate complete target dates
+DAY3=$(date -d "3 days ago" +%d)
+DAY2=$(date -d "2 days ago" +%d)
+DAY1=$(date -d "1 day ago" +%d)
+MONTH=$(date -d "1 day ago" +%b)  # Month abbreviation (Jan, Feb, etc.)
+MONTH_NUM=$(date -d "1 day ago" +%m)  # Month number (01-12)
+YEAR=$(date -d "1 day ago" +%Y)
+YEAR_SHORT=$(date -d "1 day ago" +%y)
 
 # Function to adjust dates in files
 adjust_dates() {
@@ -47,35 +50,35 @@ adjust_dates() {
         echo "Before update:"
         head -n 1 "$file"
         
-        # Replace each source date with target date
-        sed -i 's|\[22\/Oct\/2024:|\[26\/Oct\/2024:|g' "$file"
-        sed -i 's|\[23\/Oct\/2024:|\[27\/Oct\/2024:|g' "$file"
-        sed -i 's|\[24\/Oct\/2024:|\[28\/Oct\/2024:|g' "$file"
+        # Replace fixed source dates with fully dynamic dates
+        sed -i "s|\[22\/Oct\/2024:|\[${DAY3}\/${MONTH}\/${YEAR}:|g" "$file"
+        sed -i "s|\[23\/Oct\/2024:|\[${DAY2}\/${MONTH}\/${YEAR}:|g" "$file"
+        sed -i "s|\[24\/Oct\/2024:|\[${DAY1}\/${MONTH}\/${YEAR}:|g" "$file"
         
         # Debug: show content after
         echo "After update:"
         head -n 1 "$file"
     elif [[ $file == *"mysql.log" ]]; then
         # MySQL general format
-        sed -i 's|2024-10-22|2024-10-26|g' "$file"
-        sed -i 's|2024-10-23|2024-10-27|g' "$file"
-        sed -i 's|2024-10-24|2024-10-28|g' "$file"
+        sed -i "s|2024-10-22|${YEAR}-${MONTH_NUM}-${DAY3}|g" "$file"
+        sed -i "s|2024-10-23|${YEAR}-${MONTH_NUM}-${DAY2}|g" "$file"
+        sed -i "s|2024-10-24|${YEAR}-${MONTH_NUM}-${DAY1}|g" "$file"
     elif [[ $file == *"mysql-slow.log" ]]; then
         # MySQL slow query format
-        sed -i 's|Time: 2024-10-22|Time: 2024-10-26|g' "$file"
-        sed -i 's|Time: 2024-10-23|Time: 2024-10-27|g' "$file"
-        sed -i 's|Time: 2024-10-24|Time: 2024-10-28|g' "$file"
+        sed -i "s|Time: 2024-10-22|Time: ${YEAR}-${MONTH_NUM}-${DAY3}|g" "$file"
+        sed -i "s|Time: 2024-10-23|Time: ${YEAR}-${MONTH_NUM}-${DAY2}|g" "$file"
+        sed -i "s|Time: 2024-10-24|Time: ${YEAR}-${MONTH_NUM}-${DAY1}|g" "$file"
     elif [[ $file == *"error.log" ]]; then
         if [[ $file == *"mysql"* ]]; then
             # MySQL error log format
-            sed -i 's|241022|241026|g' "$file"
-            sed -i 's|241023|241027|g' "$file"
-            sed -i 's|241024|241028|g' "$file"
+            sed -i "s|241022|${YEAR_SHORT}${MONTH_NUM}${DAY3}|g" "$file"
+            sed -i "s|241023|${YEAR_SHORT}${MONTH_NUM}${DAY2}|g" "$file"
+            sed -i "s|241024|${YEAR_SHORT}${MONTH_NUM}${DAY1}|g" "$file"
         else
             # Nginx error log format
-            sed -i 's|2024\/10\/22|2024\/10\/26|g' "$file"
-            sed -i 's|2024\/10\/23|2024\/10\/27|g' "$file"
-            sed -i 's|2024\/10\/24|2024\/10\/28|g' "$file"
+            sed -i "s|2024\/10\/22|${YEAR}\/${MONTH_NUM}\/${DAY3}|g" "$file"
+            sed -i "s|2024\/10\/23|${YEAR}\/${MONTH_NUM}\/${DAY2}|g" "$file"
+            sed -i "s|2024\/10\/24|${YEAR}\/${MONTH_NUM}\/${DAY1}|g" "$file"
         fi
     fi
 }

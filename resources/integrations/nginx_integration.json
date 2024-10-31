@@ -21,8 +21,7 @@
               "tags": [
                 "nginx-access"
               ],
-              "preserve_original_event": false,
-              "ignore_older": "72h"
+              "preserve_original_event": false
             }
           },
           "nginx.error": {
@@ -34,8 +33,7 @@
               "tags": [
                 "nginx-error"
               ],
-              "preserve_original_event": false,
-              "ignore_older": "72h"
+              "preserve_original_event": false
             }
           }
         }

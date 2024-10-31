@@ -115,19 +115,21 @@ adjust_dates() {
 }
 
 # Process files in temporary directory first
-find "$TEMP_DIR/process/var/log/nginx_*" "$TEMP_DIR/process/var/log/mysql" -type f 2>/dev/null | while read -r file; do
+find "$TEMP_DIR/process/var/log/" -type f \( -path "*/nginx_*/*" -o -path "*/mysql/*" \) 2>/dev/null | while read -r file; do
     adjust_dates "$file"
 done
 
 echo "Moving processed files to /var/log..."
 if [[ "$LOG_TYPE" == "full" ]]; then
     # For full logs, move with overwrite
-    mv -f "$TEMP_DIR/process/var/log/nginx_"* /var/log/
-    mv -f "$TEMP_DIR/process/var/log/mysql" /var/log/
+    mv -f "$TEMP_DIR/process/var/log/nginx_backend/"* /var/log/nginx_backend/
+    mv -f "$TEMP_DIR/process/var/log/nginx_frontend/"* /var/log/nginx_frontend/
+    mv -f "$TEMP_DIR/process/var/log/mysql/"* /var/log/mysql/
 else
     # For truncated logs, be more careful
-    mv -n "$TEMP_DIR/process/var/log/nginx_"* /var/log/
-    mv -n "$TEMP_DIR/process/var/log/mysql" /var/log/
+    mv -n "$TEMP_DIR/process/var/log/nginx_backend/"* /var/log/nginx_backend/
+    mv -n "$TEMP_DIR/process/var/log/nginx_frontend/"* /var/log/nginx_frontend/
+    mv -n "$TEMP_DIR/process/var/log/mysql/"* /var/log/mysql/
 fi
 
 # Clean up

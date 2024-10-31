@@ -17,7 +17,7 @@ fi
 # Hardcoded S3 base URL and timestamps
 S3_BASE="https://david-hope-elastic-snapshots.s3.us-east-2.amazonaws.com"
 TIMESTAMP_FULL="20241028_133026"
-TIMESTAMP_TRUNCATED="20241024_190458"
+TIMESTAMP_TRUNCATED="20241028_133026"
 TIMESTAMP="${LOG_TYPE}_${TIMESTAMP_FULL}"
 [[ "$LOG_TYPE" == "truncated" ]] && TIMESTAMP="${LOG_TYPE}_${TIMESTAMP_TRUNCATED}"
 
@@ -63,35 +63,35 @@ adjust_dates() {
     if [[ $file == *"access.log" ]]; then
         echo "Found access log, updating dates..."
         # Replace fixed source dates with fully dynamic dates
-        sed -i "s|\[22\/Oct\/2024:|\[${DAY4}\/${MONTH}\/${YEAR}:|g" "$file"
-        sed -i "s|\[23\/Oct\/2024:|\[${DAY3}\/${MONTH}\/${YEAR}:|g" "$file"
-        sed -i "s|\[24\/Oct\/2024:|\[${DAY2}\/${MONTH}\/${YEAR}:|g" "$file"
-        sed -i "s|\[25\/Oct\/2024:|\[${DAY1}\/${MONTH}\/${YEAR}:|g" "$file"
+        sed -i "s|\[25\/Oct\/2024:|\[${DAY4}\/${MONTH}\/${YEAR}:|g" "$file"
+        sed -i "s|\[26\/Oct\/2024:|\[${DAY3}\/${MONTH}\/${YEAR}:|g" "$file"
+        sed -i "s|\[27\/Oct\/2024:|\[${DAY2}\/${MONTH}\/${YEAR}:|g" "$file"
+        sed -i "s|\[28\/Oct\/2024:|\[${DAY1}\/${MONTH}\/${YEAR}:|g" "$file"
     elif [[ $file == *"mysql.log" ]]; then
         # MySQL general format
-        sed -i "s|2024-10-22|${YEAR}-${MONTH_NUM}-${DAY4}|g" "$file"
-        sed -i "s|2024-10-23|${YEAR}-${MONTH_NUM}-${DAY3}|g" "$file"
-        sed -i "s|2024-10-24|${YEAR}-${MONTH_NUM}-${DAY2}|g" "$file"
-        sed -i "s|2024-10-25|${YEAR}-${MONTH_NUM}-${DAY1}|g" "$file"
+        sed -i "s|2024-10-25|${YEAR}-${MONTH_NUM}-${DAY4}|g" "$file"
+        sed -i "s|2024-10-26|${YEAR}-${MONTH_NUM}-${DAY3}|g" "$file"
+        sed -i "s|2024-10-27|${YEAR}-${MONTH_NUM}-${DAY2}|g" "$file"
+        sed -i "s|2024-10-28|${YEAR}-${MONTH_NUM}-${DAY1}|g" "$file"
     elif [[ $file == *"mysql-slow.log" ]]; then
         # MySQL slow query format
-        sed -i "s|Time: 2024-10-22|Time: ${YEAR}-${MONTH_NUM}-${DAY4}|g" "$file"
-        sed -i "s|Time: 2024-10-23|Time: ${YEAR}-${MONTH_NUM}-${DAY3}|g" "$file"
-        sed -i "s|Time: 2024-10-24|Time: ${YEAR}-${MONTH_NUM}-${DAY2}|g" "$file"
-        sed -i "s|Time: 2024-10-25|Time: ${YEAR}-${MONTH_NUM}-${DAY1}|g" "$file"
+        sed -i "s|Time: 2024-10-25|Time: ${YEAR}-${MONTH_NUM}-${DAY4}|g" "$file"
+        sed -i "s|Time: 2024-10-26|Time: ${YEAR}-${MONTH_NUM}-${DAY3}|g" "$file"
+        sed -i "s|Time: 2024-10-27|Time: ${YEAR}-${MONTH_NUM}-${DAY2}|g" "$file"
+        sed -i "s|Time: 2024-10-28|Time: ${YEAR}-${MONTH_NUM}-${DAY1}|g" "$file"
     elif [[ $file == *"error.log" ]]; then
         if [[ $file == *"mysql"* ]]; then
             # MySQL error log format
-            sed -i "s|241022|${YEAR_SHORT}${MONTH_NUM}${DAY4}|g" "$file"
-            sed -i "s|241023|${YEAR_SHORT}${MONTH_NUM}${DAY3}|g" "$file"
-            sed -i "s|241024|${YEAR_SHORT}${MONTH_NUM}${DAY2}|g" "$file"
-            sed -i "s|241025|${YEAR_SHORT}${MONTH_NUM}${DAY1}|g" "$file"
+            sed -i "s|241025|${YEAR_SHORT}${MONTH_NUM}${DAY4}|g" "$file"
+            sed -i "s|241026|${YEAR_SHORT}${MONTH_NUM}${DAY3}|g" "$file"
+            sed -i "s|241027|${YEAR_SHORT}${MONTH_NUM}${DAY2}|g" "$file"
+            sed -i "s|241028|${YEAR_SHORT}${MONTH_NUM}${DAY1}|g" "$file"
         else
             # Nginx error log format
-            sed -i "s|2024/10/22|${YEAR}/${MONTH_NUM}/${DAY4}|g" "$file"
-            sed -i "s|2024/10/23|${YEAR}/${MONTH_NUM}/${DAY3}|g" "$file"
-            sed -i "s|2024/10/24|${YEAR}/${MONTH_NUM}/${DAY2}|g" "$file"
-            sed -i "s|2024/10/25|${YEAR}/${MONTH_NUM}/${DAY1}|g" "$file"
+            sed -i "s|2024/10/25|${YEAR}/${MONTH_NUM}/${DAY4}|g" "$file"
+            sed -i "s|2024/10/26|${YEAR}/${MONTH_NUM}/${DAY3}|g" "$file"
+            sed -i "s|2024/10/27|${YEAR}/${MONTH_NUM}/${DAY2}|g" "$file"
+            sed -i "s|2024/10/28|${YEAR}/${MONTH_NUM}/${DAY1}|g" "$file"
         fi
     fi
     tac "$file" > "${file}.reversed" && mv "${file}.reversed" "$file"

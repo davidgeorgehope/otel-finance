@@ -26,7 +26,7 @@ def load():
             new_slo_ids.append(new_slo_id)
 
     # Now update the dashboard file with new SLO IDs
-    dashboard_path = 'resources/kibana/dashboards.ndjson'
+    dashboard_path = 'kibana/dashboards.ndjson'
     with open(dashboard_path, 'r', encoding='utf8') as f:
         dashboard_lines = f.readlines()
 

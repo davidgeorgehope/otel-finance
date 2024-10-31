@@ -139,6 +139,7 @@ def download_and_install_elastic_agent(enrollment_token):
         'sudo',  # Add 'sudo' if root permissions are required
         './elastic-agent',
         'install',
+        '-f',
         '--url', FLEET_URL,
         '--enrollment-token', enrollment_token,
         '--insecure'  # Remove this if SSL is properly configured

@@ -45,14 +45,3 @@ echo "Full logs have been downloaded and extracted to /var/log"
 echo "Files extracted:"
 find /var/log/nginx_* /var/log/mysql -type f 2>/dev/null | sort
 
-# Fix permissions
-echo "Setting appropriate permissions..."
-if [ -d "/var/log/nginx_frontend" ]; then
-    chown -R nginx:nginx /var/log/nginx_frontend
-fi
-if [ -d "/var/log/nginx_backend" ]; then
-    chown -R nginx:nginx /var/log/nginx_backend
-fi
-if [ -d "/var/log/mysql" ]; then
-    chown -R mysql:mysql /var/log/mysql
-fi

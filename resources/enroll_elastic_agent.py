@@ -11,7 +11,7 @@ ELASTIC_USER = os.environ.get('ELASTICSEARCH_USER', 'elastic')
 ELASTIC_PASSWORD = os.environ.get('ELASTICSEARCH_PASSWORD', 'changeme')
 ELASTIC_AGENT_DOWNLOAD_URL = os.environ.get(
     'ELASTIC_AGENT_DOWNLOAD_URL',
-    'https://artifacts.elastic.co/downloads/beats/elastic-agent/elastic-agent-8.15.3-linux-x86_64.tar.gz'
+    'https://artifacts.elastic.co/downloads/beats/elastic-agent/elastic-agent-8.15.2-linux-x86_64.tar.gz'
 )
 ELASTIC_AGENT_INSTALL_DIR = os.environ.get('ELASTIC_AGENT_INSTALL_DIR', '/opt/Elastic/Agent')
 AGENT_POLICY_NAME = 'Agent policy 1'  # Name from your integration JSON

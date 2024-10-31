@@ -39,29 +39,38 @@ DAY1=$(date -d "1 day ago" +%Y%m%d)
 # Function to adjust dates in files
 adjust_dates() {
     local file=$1
-    # Nginx access logs format
-    sed -i -E "s/\[([0-9]{2})\/Oct\/2024:/\[28\/Oct\/2024:/g" "$file"
-    sed -i -E "s/\[([0-9]{2})\/Oct\/2024:/\[27\/Oct\/2024:/g" "$file"
-    sed -i -E "s/\[([0-9]{2})\/Oct\/2024:/\[26\/Oct\/2024:/g" "$file"
+    echo "Processing $file"
+    
+    if [[ $file == *"access.log" ]]; then
+        # Nginx access logs format
+        sed -i 's/\[[0-9]\{2\}\/Oct\/2024:/\[28\/Oct\/2024:/g' "$file"
+        sed -i 's/\[[0-9]\{2\}\/Oct\/2024:/\[27\/Oct\/2024:/g' "$file"
+        sed -i 's/\[[0-9]\{2\}\/Oct\/2024:/\[26\/Oct\/2024:/g' "$file"
+    elif [[ $file == *"mysql.log" ]]; then
+        # MySQL general format
+        sed -i 's/2024-10-[0-9][0-9]/2024-10-28/g' "$file"
+        sed -i 's/2024-10-[0-9][0-9]/2024-10-27/g' "$file"
+        sed -i 's/2024-10-[0-9][0-9]/2024-10-26/g' "$file"
+    elif [[ $file == *"mysql-slow.log" ]]; then
+        # MySQL slow query format
+        sed -i 's/Time: 2024-10-[0-9][0-9]/Time: 2024-10-28/g' "$file"
+        sed -i 's/Time: 2024-10-[0-9][0-9]/Time: 2024-10-27/g' "$file"
+        sed -i 's/Time: 2024-10-[0-9][0-9]/Time: 2024-10-26/g' "$file"
+    elif [[ $file == *"error.log" ]]; then
+        if [[ $file == *"mysql"* ]]; then
+            # MySQL error log format
+            sed -i 's/241[0-9][0-9][0-9]/241028/g' "$file"
+            sed -i 's/241[0-9][0-9][0-9]/241027/g' "$file"
+            sed -i 's/241[0-9][0-9][0-9]/241026/g' "$file"
+        else
+            # Nginx error log format
+            sed -i 's/2024\/10\/[0-9][0-9]/2024\/10\/28/g' "$file"
+            sed -i 's/2024\/10\/[0-9][0-9]/2024\/10\/27/g' "$file"
+            sed -i 's/2024\/10\/[0-9][0-9]/2024\/10\/26/g' "$file"
+        fi
+    fi
+}
 
-    # MySQL general format
-    sed -i -E "s/2024-10-[0-9]{2}/2024-10-28/g" "$file"
-    sed -i -E "s/2024-10-[0-9]{2}/2024-10-27/g" "$file"
-    sed -i -E "s/2024-10-[0-9]{2}/2024-10-26/g" "$file"
-
-    # MySQL slow query format
-    sed -i -E "s/Time: 2024-10-[0-9]{2}/Time: 2024-10-28/g" "$file"
-    sed -i -E "s/Time: 2024-10-[0-9]{2}/Time: 2024-10-27/g" "$file"
-    sed -i -E "s/Time: 2024-10-[0-9]{2}/Time: 2024-10-26/g" "$file"
-
-    # MySQL error log format
-    sed -i -E "s/241[0-9]{3}/241028/g" "$file"
-    sed -i -E "s/241[0-9]{3}/241027/g" "$file"
-    sed -i -E "s/241[0-9]{3}/241026/g" "$file"
-
-    # Nginx error log format
-    sed -i -E "s/2024\/10\/[0-9]{2}/2024\/10\/28/g" "$file"
-    sed -i -E "s/2024\/10\/[0-9]{2}/2024\/10\/27/g" "$file"
 # Clean up
 cd / || exit 1
 rm -rf "$TEMP_DIR"

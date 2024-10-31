@@ -74,35 +74,35 @@ adjust_dates() {
     
     if [[ $file == *"access.log" ]]; then
         echo "Found access log, updating dates..."
-        sed -e "s|\[${LOG_DAY4}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY4}/${MONTH}/${YEAR}:|g" \
-            -e "s|\[${LOG_DAY3}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY3}/${MONTH}/${YEAR}:|g" \
+        sed -e "s|\[${LOG_DAY1}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY1}/${MONTH}/${YEAR}:|g" \
             -e "s|\[${LOG_DAY2}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY2}/${MONTH}/${YEAR}:|g" \
-            -e "s|\[${LOG_DAY1}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY1}/${MONTH}/${YEAR}:|g" \
+            -e "s|\[${LOG_DAY3}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY3}/${MONTH}/${YEAR}:|g" \
+            -e "s|\[${LOG_DAY4}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY4}/${MONTH}/${YEAR}:|g" \
             "$file" > "$temp_file" && mv "$temp_file" "$file"
     elif [[ $file == *"mysql.log" ]]; then
-        sed -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY4}|${YEAR}-${MONTH_NUM}-${DAY4}|g" \
-            -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY3}|${YEAR}-${MONTH_NUM}-${DAY3}|g" \
+        sed -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY1}|${YEAR}-${MONTH_NUM}-${DAY1}|g" \
             -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY2}|${YEAR}-${MONTH_NUM}-${DAY2}|g" \
-            -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY1}|${YEAR}-${MONTH_NUM}-${DAY1}|g" \
+            -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY3}|${YEAR}-${MONTH_NUM}-${DAY3}|g" \
+            -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY4}|${YEAR}-${MONTH_NUM}-${DAY4}|g" \
             "$file" > "$temp_file" && mv "$temp_file" "$file"
     elif [[ $file == *"mysql-slow.log" ]]; then
-        sed -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY4}|Time: ${YEAR}-${MONTH_NUM}-${DAY4}|g" \
-            -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY3}|Time: ${YEAR}-${MONTH_NUM}-${DAY3}|g" \
+        sed -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY1}|Time: ${YEAR}-${MONTH_NUM}-${DAY1}|g" \
             -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY2}|Time: ${YEAR}-${MONTH_NUM}-${DAY2}|g" \
-            -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY1}|Time: ${YEAR}-${MONTH_NUM}-${DAY1}|g" \
+            -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY3}|Time: ${YEAR}-${MONTH_NUM}-${DAY3}|g" \
+            -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY4}|Time: ${YEAR}-${MONTH_NUM}-${DAY4}|g" \
             "$file" > "$temp_file" && mv "$temp_file" "$file"
     elif [[ $file == *"error.log" ]]; then
         if [[ $file == *"mysql"* ]]; then
-            sed -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY4}|${YEAR_SHORT}${MONTH_NUM}${DAY4}|g" \
-                -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY3}|${YEAR_SHORT}${MONTH_NUM}${DAY3}|g" \
+            sed -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY1}|${YEAR_SHORT}${MONTH_NUM}${DAY1}|g" \
                 -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY2}|${YEAR_SHORT}${MONTH_NUM}${DAY2}|g" \
-                -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY1}|${YEAR_SHORT}${MONTH_NUM}${DAY1}|g" \
+                -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY3}|${YEAR_SHORT}${MONTH_NUM}${DAY3}|g" \
+                -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY4}|${YEAR_SHORT}${MONTH_NUM}${DAY4}|g" \
                 "$file" > "$temp_file" && mv "$temp_file" "$file"
         else
-            sed -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY4}|${YEAR}/${MONTH_NUM}/${DAY4}|g" \
-                -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY3}|${YEAR}/${MONTH_NUM}/${DAY3}|g" \
+            sed -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY1}|${YEAR}/${MONTH_NUM}/${DAY1}|g" \
                 -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY2}|${YEAR}/${MONTH_NUM}/${DAY2}|g" \
-                -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY1}|${YEAR}/${MONTH_NUM}/${DAY1}|g" \
+                -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY3}|${YEAR}/${MONTH_NUM}/${DAY3}|g" \
+                -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY4}|${YEAR}/${MONTH_NUM}/${DAY4}|g" \
                 "$file" > "$temp_file" && mv "$temp_file" "$file"
         fi
     fi

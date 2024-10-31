@@ -72,19 +72,11 @@ adjust_dates() {
     
     if [[ $file == *"access.log" ]]; then
         echo "Found access log, updating dates..."
-        # Debug: show content before
-        echo "Before update:"
-        head -n 1 "$file"
-        
         # Replace fixed source dates with fully dynamic dates
         sed -i "s|\[22\/Oct\/2024:|\[${DAY4}\/${MONTH}\/${YEAR}:|g" "$file"
         sed -i "s|\[23\/Oct\/2024:|\[${DAY3}\/${MONTH}\/${YEAR}:|g" "$file"
         sed -i "s|\[24\/Oct\/2024:|\[${DAY2}\/${MONTH}\/${YEAR}:|g" "$file"
         sed -i "s|\[25\/Oct\/2024:|\[${DAY1}\/${MONTH}\/${YEAR}:|g" "$file"
-        
-        # Debug: show content after
-        echo "After update:"
-        head -n 1 "$file"
     elif [[ $file == *"mysql.log" ]]; then
         # MySQL general format
         sed -i "s|2024-10-22|${YEAR}-${MONTH_NUM}-${DAY4}|g" "$file"
@@ -106,21 +98,34 @@ adjust_dates() {
             sed -i "s|241025|${YEAR_SHORT}${MONTH_NUM}${DAY1}|g" "$file"
         else
             # Nginx error log format
-            sed -i "s|2024\/10\/22|${YEAR}\/${MONTH_NUM}\/${DAY4}|g" "$file"
-            sed -i "s|2024\/10\/23|${YEAR}\/${MONTH_NUM}\/${DAY3}|g" "$file"
-            sed -i "s|2024\/10\/24|${YEAR}\/${MONTH_NUM}\/${DAY2}|g" "$file"
-            sed -i "s|2024\/10\/25|${YEAR}\/${MONTH_NUM}\/${DAY1}|g" "$file"
+            sed -i "s|2024/10/22|${YEAR}/${MONTH_NUM}/${DAY4}|g" "$file"
+            sed -i "s|2024/10/23|${YEAR}/${MONTH_NUM}/${DAY3}|g" "$file"
+            sed -i "s|2024/10/24|${YEAR}/${MONTH_NUM}/${DAY2}|g" "$file"
+            sed -i "s|2024/10/25|${YEAR}/${MONTH_NUM}/${DAY1}|g" "$file"
         fi
     fi
 }
 
-# Debug: show what directories exist
+# List of directories to process
+DIRS=(
+    "$TEMP_DIR/process/var/log/nginx_backend"
+    "$TEMP_DIR/process/var/log/nginx_frontend"
+    "$TEMP_DIR/process/var/log/mysql"
+)
+
 echo "Available directories:"
 ls -la "$TEMP_DIR/process/var/log/"
 
-# Process files in temporary directory first
-find "$TEMP_DIR/process/var/log/nginx_backend" "$TEMP_DIR/process/var/log/nginx_frontend" "$TEMP_DIR/process/var/log/mysql" -type f 2>/dev/null | while read -r file; do
-    adjust_dates "$file"
+# Process files in each directory
+for dir in "${DIRS[@]}"; do
+    if [ -d "$dir" ]; then
+        echo "Processing directory: $dir"
+        find "$dir" -type f 2>/dev/null | while read -r file; do
+            adjust_dates "$file"
+        done
+    else
+        echo "Directory $dir does not exist, skipping."
+    fi
 done
 
 echo "Moving processed files to /var/log..."

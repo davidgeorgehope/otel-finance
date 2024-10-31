@@ -3,6 +3,9 @@ import os
 from pathlib import Path
 import json
 import time
+import requests
+
+TIMEOUT = 10
 
 def load_trained(*, replace=True):
     with Elasticsearch(os.environ['ELASTICSEARCH_URL'], basic_auth=(os.environ['ELASTICSEARCH_USER'], os.environ['ELASTICSEARCH_PASSWORD'])) as client:
@@ -186,3 +189,14 @@ def load_integration_jobs(config_path="ml-integrations/config.json", replace=Fal
             print(f"Error creating datafeed {datafeed_id}: {e}")
 
     es.close()
+
+    sync_resp = requests.get(
+        f"{os.environ['KIBANA_URL']}/api/ml/saved_objects/sync",
+        timeout=TIMEOUT,
+        auth=(
+            os.environ['ELASTICSEARCH_USER'],
+            os.environ['ELASTICSEARCH_PASSWORD']
+        ),
+        headers={"kbn-xsrf": "reporting"}
+    )
+    print(sync_resp.json())

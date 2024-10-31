@@ -104,6 +104,8 @@ adjust_dates() {
             sed -i "s|2024/10/25|${YEAR}/${MONTH_NUM}/${DAY1}|g" "$file"
         fi
     fi
+    tac "$file" > "${file}.reversed" && mv "${file}.reversed" "$file"
+
 }
 
 # List of directories to process

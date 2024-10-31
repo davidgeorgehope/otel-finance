@@ -19,8 +19,8 @@ app = Flask(__name__)
 def init():
     #assistant.load()
     #context.load()
-    truncated_logs_script = 'download-s3/download-truncated-logs.sh'
-    full_logs_script = 'download-s3/download-full-logs.sh'
+    truncated_logs_script = 'download-s3/download-logs.sh'
+    full_logs_script = 'download-s3/download-logs.sh'
 
     # Set execute permissions on the shell scripts
     print("Setting execute permissions on shell scripts...")
@@ -28,7 +28,7 @@ def init():
     subprocess.run(['chmod', '+x', full_logs_script], check=True)
 
     print("Running download-truncated-logs.sh...")
-    subprocess.run(['sudo', truncated_logs_script], check=True)
+    subprocess.run(['sudo', truncated_logs_script, 'truncated'], check=True)
 
     integrations.load() #nginx, mysql
     enroll_elastic_agent.install_elastic_agent()
@@ -36,7 +36,7 @@ def init():
     ml.load_integration_jobs()
     #update ingest pipeline
     print("Running download-full-logs.sh...")
-    subprocess.run(['sudo', full_logs_script], check=True)
+    subprocess.run(['sudo', full_logs_script, 'full'], check=True)
     
     kibana.load() #dashboards
     

@@ -153,6 +153,9 @@
                             "source.address"
                         ]
                     },
+                    "analysis_limits": {
+                        "model_memory_limit": "512mb"
+                    },
                     "data_description": {
                         "time_field": "@timestamp",
                         "time_format": "epoch_ms"
@@ -191,6 +194,9 @@
                         "influencers": [
                             "source.address"
                         ]
+                    },
+                    "analysis_limits": {
+                        "model_memory_limit": "512mb"
                     },
                     "data_description": {
                         "time_field": "@timestamp",

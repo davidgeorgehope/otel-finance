@@ -28,7 +28,6 @@ TEMP_DIR="${HOME}/log_extract_${TIMESTAMP}"
 
 echo "Found logs at $S3_URL"
 
-
 echo "Downloading ${LOG_TYPE} logs..."
 
 # Create temporary directories for processing
@@ -45,15 +44,25 @@ tar xzf "$FILENAME" -C "$TEMP_DIR/process"
 
 echo "Adjusting dates in log files..."
 
-# Calculate complete target dates
-DAY4=$(date -d "4 days ago" +%d)
-DAY3=$(date -d "3 days ago" +%d)
-DAY2=$(date -d "2 days ago" +%d)
-DAY1=$(date -d "1 day ago" +%d)
-MONTH=$(date -d "1 day ago" +%b)  # Month abbreviation (Jan, Feb, etc.)
-MONTH_NUM=$(date -d "1 day ago" +%m)  # Month number (01-12)
-YEAR=$(date -d "1 day ago" +%Y)
-YEAR_SHORT=$(date -d "1 day ago" +%y)
+# Dates in the logs (source dates)
+LOG_DAY1=28  # Latest date in logs
+LOG_DAY2=27
+LOG_DAY3=26
+LOG_DAY4=25  # Earliest date in logs
+LOG_MONTH=Oct
+LOG_MONTH_NUM=10
+LOG_YEAR=2024
+LOG_YEAR_SHORT=24
+
+# Target dates (dates you want to replace with)
+DAY1=$(date -d "today" +%d)         # Today's date
+DAY2=$(date -d "1 day ago" +%d)     # 1 day ago
+DAY3=$(date -d "2 days ago" +%d)    # 2 days ago
+DAY4=$(date -d "3 days ago" +%d)    # 3 days ago
+MONTH=$(date -d "today" +%b)        # Current month abbreviation
+MONTH_NUM=$(date -d "today" +%m)    # Current month number
+YEAR=$(date -d "today" +%Y)         # Current year
+YEAR_SHORT=$(date -d "today" +%y)   # Current year in two digits
 
 # Function to adjust dates in files
 adjust_dates() {
@@ -65,44 +74,41 @@ adjust_dates() {
     
     if [[ $file == *"access.log" ]]; then
         echo "Found access log, updating dates..."
-        sed -e "s|\[25\/Oct\/2024:|\[${DAY4}\/${MONTH}\/${YEAR}:|g" \
-            -e "s|\[26\/Oct\/2024:|\[${DAY3}\/${MONTH}\/${YEAR}:|g" \
-            -e "s|\[27\/Oct\/2024:|\[${DAY2}\/${MONTH}\/${YEAR}:|g" \
-            -e "s|\[28\/Oct\/2024:|\[${DAY1}\/${MONTH}\/${YEAR}:|g" \
+        sed -e "s|\[${LOG_DAY4}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY4}/${MONTH}/${YEAR}:|g" \
+            -e "s|\[${LOG_DAY3}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY3}/${MONTH}/${YEAR}:|g" \
+            -e "s|\[${LOG_DAY2}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY2}/${MONTH}/${YEAR}:|g" \
+            -e "s|\[${LOG_DAY1}/${LOG_MONTH}/${LOG_YEAR}:|\[${DAY1}/${MONTH}/${YEAR}:|g" \
             "$file" > "$temp_file" && mv "$temp_file" "$file"
     elif [[ $file == *"mysql.log" ]]; then
-        sed -e "s|2024-10-25|${YEAR}-${MONTH_NUM}-${DAY4}|g" \
-            -e "s|2024-10-26|${YEAR}-${MONTH_NUM}-${DAY3}|g" \
-            -e "s|2024-10-27|${YEAR}-${MONTH_NUM}-${DAY2}|g" \
-            -e "s|2024-10-28|${YEAR}-${MONTH_NUM}-${DAY1}|g" \
+        sed -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY4}|${YEAR}-${MONTH_NUM}-${DAY4}|g" \
+            -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY3}|${YEAR}-${MONTH_NUM}-${DAY3}|g" \
+            -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY2}|${YEAR}-${MONTH_NUM}-${DAY2}|g" \
+            -e "s|${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY1}|${YEAR}-${MONTH_NUM}-${DAY1}|g" \
             "$file" > "$temp_file" && mv "$temp_file" "$file"
     elif [[ $file == *"mysql-slow.log" ]]; then
-        sed -e "s|Time: 2024-10-25|Time: ${YEAR}-${MONTH_NUM}-${DAY4}|g" \
-            -e "s|Time: 2024-10-26|Time: ${YEAR}-${MONTH_NUM}-${DAY3}|g" \
-            -e "s|Time: 2024-10-27|Time: ${YEAR}-${MONTH_NUM}-${DAY2}|g" \
-            -e "s|Time: 2024-10-28|Time: ${YEAR}-${MONTH_NUM}-${DAY1}|g" \
+        sed -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY4}|Time: ${YEAR}-${MONTH_NUM}-${DAY4}|g" \
+            -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY3}|Time: ${YEAR}-${MONTH_NUM}-${DAY3}|g" \
+            -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY2}|Time: ${YEAR}-${MONTH_NUM}-${DAY2}|g" \
+            -e "s|Time: ${LOG_YEAR}-${LOG_MONTH_NUM}-${LOG_DAY1}|Time: ${YEAR}-${MONTH_NUM}-${DAY1}|g" \
             "$file" > "$temp_file" && mv "$temp_file" "$file"
     elif [[ $file == *"error.log" ]]; then
         if [[ $file == *"mysql"* ]]; then
-            sed -e "s|241025|${YEAR_SHORT}${MONTH_NUM}${DAY4}|g" \
-                -e "s|241026|${YEAR_SHORT}${MONTH_NUM}${DAY3}|g" \
-                -e "s|241027|${YEAR_SHORT}${MONTH_NUM}${DAY2}|g" \
-                -e "s|241028|${YEAR_SHORT}${MONTH_NUM}${DAY1}|g" \
+            sed -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY4}|${YEAR_SHORT}${MONTH_NUM}${DAY4}|g" \
+                -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY3}|${YEAR_SHORT}${MONTH_NUM}${DAY3}|g" \
+                -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY2}|${YEAR_SHORT}${MONTH_NUM}${DAY2}|g" \
+                -e "s|${LOG_YEAR_SHORT}${LOG_MONTH_NUM}${LOG_DAY1}|${YEAR_SHORT}${MONTH_NUM}${DAY1}|g" \
                 "$file" > "$temp_file" && mv "$temp_file" "$file"
         else
-            sed -e "s|2024/10/25|${YEAR}/${MONTH_NUM}/${DAY4}|g" \
-                -e "s|2024/10/26|${YEAR}/${MONTH_NUM}/${DAY3}|g" \
-                -e "s|2024/10/27|${YEAR}/${MONTH_NUM}/${DAY2}|g" \
-                -e "s|2024/10/28|${YEAR}/${MONTH_NUM}/${DAY1}|g" \
+            sed -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY4}|${YEAR}/${MONTH_NUM}/${DAY4}|g" \
+                -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY3}|${YEAR}/${MONTH_NUM}/${DAY3}|g" \
+                -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY2}|${YEAR}/${MONTH_NUM}/${DAY2}|g" \
+                -e "s|${LOG_YEAR}/${LOG_MONTH_NUM}/${LOG_DAY1}|${YEAR}/${MONTH_NUM}/${DAY1}|g" \
                 "$file" > "$temp_file" && mv "$temp_file" "$file"
         fi
     fi
 
     # Clean up any stray temporary files
     rm -f "$temp_file"
-    rm -f "sedlmwfgx"
-
-    # Reverse the file contents
 }
 
 # List of directories to process

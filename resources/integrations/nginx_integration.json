@@ -41,7 +41,7 @@
         }
       },
       "nginx-nginx/metrics": {
-        "enabled": true,
+        "enabled": false,
         "vars": {
           "hosts": [
             "http://127.0.0.1:8080",
@@ -50,7 +50,7 @@
         },
         "streams": {
           "nginx.stubstatus": {
-            "enabled": true,
+            "enabled": false,
             "vars": {
               "period": "10s",
               "server_status_path": "/nginx_status",

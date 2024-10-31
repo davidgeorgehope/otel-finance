@@ -11,7 +11,6 @@ import assistant
 import integrations
 import enroll_elastic_agent
 import subprocess
-import process_logs
 
 
 app = Flask(__name__)

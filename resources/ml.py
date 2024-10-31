@@ -129,7 +129,7 @@ def load_anomaly(*, replace=False):
                 except Exception as inst:
                     print(inst)
 
-def load_integration_jobs(config_path="ml-integrations/config.json", replace=True):
+def load_integration_jobs(config_path="ml-integrations/config.json", replace=False):
 
     with open(config_path, 'r') as f:
         config = json.load(f)

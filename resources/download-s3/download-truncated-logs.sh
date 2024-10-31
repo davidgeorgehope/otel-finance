@@ -47,36 +47,35 @@ adjust_dates() {
         echo "Before update:"
         head -n 1 "$file"
         
-        # Update all dates to 28th first
-        sed -i 's|\[..\/Oct\/2024:|\[28\/Oct\/2024:|g' "$file"
-        # Then distribute to 27th and 26th
-        sed -i '1,100s|\[28\/Oct\/2024:|\[27\/Oct\/2024:|g' "$file"
-        sed -i '101,200s|\[28\/Oct\/2024:|\[26\/Oct\/2024:|g' "$file"
+        # Replace each source date with target date
+        sed -i 's|\[22\/Oct\/2024:|\[26\/Oct\/2024:|g' "$file"
+        sed -i 's|\[23\/Oct\/2024:|\[27\/Oct\/2024:|g' "$file"
+        sed -i 's|\[24\/Oct\/2024:|\[28\/Oct\/2024:|g' "$file"
         
         # Debug: show content after
         echo "After update:"
         head -n 1 "$file"
     elif [[ $file == *"mysql.log" ]]; then
         # MySQL general format
-        sed -i 's|2024-10-[0-9][0-9]|2024-10-28|g' "$file"
-        sed -i '1,100s|2024-10-28|2024-10-27|g' "$file"
-        sed -i '101,200s|2024-10-28|2024-10-26|g' "$file"
+        sed -i 's|2024-10-22|2024-10-26|g' "$file"
+        sed -i 's|2024-10-23|2024-10-27|g' "$file"
+        sed -i 's|2024-10-24|2024-10-28|g' "$file"
     elif [[ $file == *"mysql-slow.log" ]]; then
         # MySQL slow query format
-        sed -i 's|Time: 2024-10-[0-9][0-9]|Time: 2024-10-28|g' "$file"
-        sed -i '1,100s|Time: 2024-10-28|Time: 2024-10-27|g' "$file"
-        sed -i '101,200s|Time: 2024-10-28|Time: 2024-10-26|g' "$file"
+        sed -i 's|Time: 2024-10-22|Time: 2024-10-26|g' "$file"
+        sed -i 's|Time: 2024-10-23|Time: 2024-10-27|g' "$file"
+        sed -i 's|Time: 2024-10-24|Time: 2024-10-28|g' "$file"
     elif [[ $file == *"error.log" ]]; then
         if [[ $file == *"mysql"* ]]; then
             # MySQL error log format
-            sed -i 's|241[0-9][0-9][0-9]|241028|g' "$file"
-            sed -i '1,100s|241028|241027|g' "$file"
-            sed -i '101,200s|241028|241026|g' "$file"
+            sed -i 's|241022|241026|g' "$file"
+            sed -i 's|241023|241027|g' "$file"
+            sed -i 's|241024|241028|g' "$file"
         else
             # Nginx error log format
-            sed -i 's|2024\/10\/[0-9][0-9]|2024\/10\/28|g' "$file"
-            sed -i '1,100s|2024\/10\/28|2024\/10\/27|g' "$file"
-            sed -i '101,200s|2024\/10\/28|2024\/10\/26|g' "$file"
+            sed -i 's|2024\/10\/22|2024\/10\/26|g' "$file"
+            sed -i 's|2024\/10\/23|2024\/10\/27|g' "$file"
+            sed -i 's|2024\/10\/24|2024\/10\/28|g' "$file"
         fi
     fi
 }

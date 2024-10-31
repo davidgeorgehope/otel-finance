@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -euo pipefail  # Exit on error, undefined variables are errors, fail on pipe errors
-
 # Check if log type argument is provided
 if [ "$#" -ne 1 ] || [[ ! "$1" =~ ^(full|truncated)$ ]]; then
     echo "Usage: $0 [full|truncated]"
@@ -57,10 +55,10 @@ LOG_YEAR=2024
 LOG_YEAR_SHORT=24
 
 # Target dates (dates you want to replace with)
-DAY1=$(date -d "today" +%d)         # Today's date
-DAY2=$(date -d "1 day ago" +%d)     # 1 day ago
-DAY3=$(date -d "2 days ago" +%d)    # 2 days ago
-DAY4=$(date -d "3 days ago" +%d)    # 3 days ago
+DAY1=$(date -d "1 day ago" +%d)     # 1 day ago
+DAY2=$(date -d "2 day ago" +%d)     # 2 day ago
+DAY3=$(date -d "3 days ago" +%d)    # 2 days ago
+DAY4=$(date -d "4 days ago" +%d)    # 3 days ago
 MONTH=$(date -d "today" +%b)        # Current month abbreviation
 MONTH_NUM=$(date -d "today" +%m)    # Current month number
 YEAR=$(date -d "today" +%Y)         # Current year

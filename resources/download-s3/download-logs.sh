@@ -114,8 +114,12 @@ adjust_dates() {
     fi
 }
 
+# Debug: show what directories exist
+echo "Available directories:"
+ls -la "$TEMP_DIR/process/var/log/"
+
 # Process files in temporary directory first
-find "$TEMP_DIR/process/var/log/" -type f \( -path "*/nginx_*/*" -o -path "*/mysql/*" \) 2>/dev/null | while read -r file; do
+find "$TEMP_DIR/process/var/log/" -type f \( -path "*/nginx_backend/*" -o -path "*/nginx_frontend/*" -o -path "*/mysql/*" \) 2>/dev/null | while read -r file; do
     adjust_dates "$file"
 done
 

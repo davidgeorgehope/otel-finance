@@ -23,16 +23,16 @@ def init():
     full_logs_script = 'download-s3/download-full-logs.sh'
 
     # Set execute permissions on the shell scripts
-    #print("Setting execute permissions on shell scripts...")
-    #subprocess.run(['chmod', '+x', truncated_logs_script], check=True)
-    #subprocess.run(['chmod', '+x', full_logs_script], check=True)
+    print("Setting execute permissions on shell scripts...")
+    subprocess.run(['chmod', '+x', truncated_logs_script], check=True)
+    subprocess.run(['chmod', '+x', full_logs_script], check=True)
 
-    #print("Running download-truncated-logs.sh...")
-    #subprocess.run(['sudo', truncated_logs_script], check=True)
+    print("Running download-truncated-logs.sh...")
+    subprocess.run(['sudo', truncated_logs_script], check=True)
 
-    #integrations.load() #nginx, mysql
-    #enroll_elastic_agent.install_elastic_agent()
-    #slo.load() 
+    integrations.load() #nginx, mysql
+    enroll_elastic_agent.install_elastic_agent()
+    slo.load() 
     ml.load_integration_jobs()
     #update ingest pipeline
     print("Running download-full-logs.sh...")

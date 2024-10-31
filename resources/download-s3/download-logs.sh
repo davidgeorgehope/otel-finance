@@ -94,7 +94,7 @@ adjust_dates() {
             sed -i "s|2024/10/28|${YEAR}/${MONTH_NUM}/${DAY1}|g" "$file"
         fi
     fi
-    tac "$file" > "${file}.reversed" && mv "${file}.reversed" "$file"
+    #tac "$file" > "${file}.reversed" && mv "${file}.reversed" "$file"
 
 }
 

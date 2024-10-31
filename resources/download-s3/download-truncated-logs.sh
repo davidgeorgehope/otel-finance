@@ -42,10 +42,11 @@ adjust_dates() {
     echo "Processing $file"
     
     if [[ $file == *"access.log" ]]; then
-        # Nginx access logs format
-        sed -i 's/\[[0-9]\{2\}\/Oct\/2024:/\[28\/Oct\/2024:/g' "$file"
-        sed -i 's/\[[0-9]\{2\}\/Oct\/2024:/\[27\/Oct\/2024:/g' "$file"
-        sed -i 's/\[[0-9]\{2\}\/Oct\/2024:/\[26\/Oct\/2024:/g' "$file"
+        # First replace all October dates with 28th
+        sed -i 's/\[[0-9][0-9]\/Oct\/2024:/\[28\/Oct\/2024:/g' "$file"
+        # Then distribute some to 27th and 26th
+        sed -i 's/\[28\/Oct\/2024:/\[27\/Oct\/2024:/g' "$file"
+        sed -i 's/\[27\/Oct\/2024:/\[26\/Oct\/2024:/g' "$file"
     elif [[ $file == *"mysql.log" ]]; then
         # MySQL general format
         sed -i 's/2024-10-[0-9][0-9]/2024-10-28/g' "$file"

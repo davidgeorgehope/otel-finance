@@ -122,10 +122,12 @@ done
 echo "Moving processed files to /var/log..."
 if [[ "$LOG_TYPE" == "full" ]]; then
     # For full logs, move with overwrite
-    cp -rf "$TEMP_DIR/process/var/log/nginx_"* "$TEMP_DIR/process/var/log/mysql" /var/log/
+    mv -f "$TEMP_DIR/process/var/log/nginx_"* /var/log/
+    mv -f "$TEMP_DIR/process/var/log/mysql" /var/log/
 else
-    # For truncated logs, move without overwrite
-    cp -n "$TEMP_DIR/process/var/log/nginx_"* "$TEMP_DIR/process/var/log/mysql" /var/log/
+    # For truncated logs, be more careful
+    mv -n "$TEMP_DIR/process/var/log/nginx_"* /var/log/
+    mv -n "$TEMP_DIR/process/var/log/mysql" /var/log/
 fi
 
 # Clean up

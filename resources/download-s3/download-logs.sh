@@ -41,17 +41,17 @@ fi
 
 echo "Downloading ${LOG_TYPE} logs..."
 
-# Create temporary directory
-mkdir -p "$TEMP_DIR"
+# Create temporary directories for processing
+mkdir -p "$TEMP_DIR/process"
 cd "$TEMP_DIR" || exit 1
 
-# Download and extract
+# Download and extract to temp processing directory
 curl -O "$S3_URL"
 FILENAME=$(basename "$S3_URL")
 
-echo "Extracting logs to /var/log..."
-# Extract and strip the var/log/log prefix from paths
-tar xzf "$FILENAME" -C /var/log --strip-components=3 ${LOG_TYPE == "full" && echo "--overwrite"}
+echo "Extracting logs to temporary directory for processing..."
+# Extract to process directory, maintaining full path
+tar xzf "$FILENAME" -C "$TEMP_DIR/process"
 
 echo "Adjusting dates in log files..."
 
@@ -114,10 +114,19 @@ adjust_dates() {
     fi
 }
 
-# Process all relevant log files
-find /var/log/nginx_* /var/log/mysql -type f 2>/dev/null | while read -r file; do
+# Process files in temporary directory first
+find "$TEMP_DIR/process/var/log/nginx_*" "$TEMP_DIR/process/var/log/mysql" -type f 2>/dev/null | while read -r file; do
     adjust_dates "$file"
 done
+
+echo "Moving processed files to /var/log..."
+if [[ "$LOG_TYPE" == "full" ]]; then
+    # For full logs, move with overwrite
+    cp -rf "$TEMP_DIR/process/var/log/nginx_"* "$TEMP_DIR/process/var/log/mysql" /var/log/
+else
+    # For truncated logs, move without overwrite
+    cp -n "$TEMP_DIR/process/var/log/nginx_"* "$TEMP_DIR/process/var/log/mysql" /var/log/
+fi
 
 # Clean up
 cd / || exit 1
@@ -125,4 +134,4 @@ rm -rf "$TEMP_DIR"
 
 echo "${LOG_TYPE^} logs have been downloaded, extracted, and dates adjusted in /var/log"
 echo "Files processed:"
-find /var/log/nginx_* /var/log/mysql -type f 2>/dev/null | sort 
+find /var/log/nginx_* /var/log/mysql -type f 2>/dev/null | sort

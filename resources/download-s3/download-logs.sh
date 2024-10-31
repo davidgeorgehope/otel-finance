@@ -28,16 +28,6 @@ TEMP_DIR="${HOME}/log_extract_${TIMESTAMP}"
 
 echo "Found logs at $S3_URL"
 
-# Only show warning and prompt for full logs
-if [[ "$LOG_TYPE" == "full" ]]; then
-    echo "Warning: This will overwrite existing log files in /var/log"
-    read -p "Do you want to continue? (y/N) " -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        echo "Operation cancelled."
-        exit 1
-    fi
-fi
 
 echo "Downloading ${LOG_TYPE} logs..."
 

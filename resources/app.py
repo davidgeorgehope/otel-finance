@@ -26,13 +26,15 @@ def init():
     subprocess.run(['chmod', '+x', full_logs_script], check=True)
 
     print("Running download-full-logs.sh...")
-    subprocess.run(['sudo', full_logs_script, 'full'], check=True)
+    subprocess.run(['sudo', full_logs_script, 'full', '--no-timestamp-processing'], check=True)
 
     integrations.load() #nginx, mysql
+    #update ingest pipeline
+
     enroll_elastic_agent.install_elastic_agent()
     slo.load() 
+    time.sleep(180)
     ml.load_integration_jobs()
-    #update ingest pipeline
     kibana.load() #dashboards
     
 

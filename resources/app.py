@@ -11,7 +11,7 @@ import assistant
 import integrations
 import enroll_elastic_agent
 import subprocess
-import ingest_pipelines
+import ingest-pipelines
 
 
 app = Flask(__name__)
@@ -30,7 +30,7 @@ def init():
     subprocess.run(['sudo', full_logs_script, 'full', '--no-timestamp-processing'], check=True)
 
     integrations.load() #nginx, mysql
-    ingest_pipelines.load()
+    ingest-pipelines.load()
     enroll_elastic_agent.install_elastic_agent()
     slo.load() 
     time.sleep(600)

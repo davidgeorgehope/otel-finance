@@ -1,0 +1,79 @@
+{
+    "description": "Pipeline for processing nginx access logs",
+    "processors": [
+      {
+        "script": {
+          "lang": "painless",
+          "source": """
+            ctx.debug = [];
+            
+            if (ctx.url?.query == null) {
+                ctx.debug.add("Query is null");
+                ctx.revenue = 0.0;
+                return;
+            }
+            
+            String query = ctx.url.query;
+            ctx.debug.add("Query: " + query);
+            
+            double amount = 0.0;
+            def amountPattern = /amount=([^&]+)/;
+            def matcher = amountPattern.matcher(query);
+            if (matcher.find()) {
+                try {
+                    amount = Double.parseDouble(matcher.group(1));
+                    ctx.debug.add("Parsed amount: " + amount);
+                } catch (Exception e) {
+                    ctx.debug.add("Failed to parse amount: " + e.getMessage());
+                    amount = 0.0;
+                }
+            } else {
+                ctx.debug.add("No amount found in query");
+            }
+            
+            boolean is500Error = ctx.http?.response?.status_code == 500;
+            ctx.debug.add("Is 500 error: " + is500Error);
+            
+            double revenue = is500Error ? -amount : amount;
+            ctx.debug.add("Calculated revenue: " + revenue);
+            
+            // Set the revenue field
+            ctx.revenue = revenue;
+            ctx.debug.add("Set revenue field to: " + ctx.revenue);
+          """
+        }
+      },
+      {
+        "set": {
+          "field": "event.type",
+          "value": "nginx_access"
+        }
+      },
+      {
+        "script": {
+          "lang": "painless",
+          "source": """
+            if (!doc.containsKey('url.query') || doc['url.query'].size() == 0) {
+              ctx.amount = 0.0;
+              return;
+            }
+            String query = doc['url.query'].value;
+            if (query.contains('amount=')) {
+              int startIndex = query.indexOf('amount=') + 7;
+              int endIndex = query.indexOf('&', startIndex);
+              endIndex = endIndex == -1 ? query.length() : endIndex;
+              String amountStr = query.substring(startIndex, endIndex);
+              try {
+                ctx.amount = Double.parseDouble(amountStr);
+              } catch (NumberFormatException e) {
+                ctx.amount = 0.0;
+              }
+            } else {
+              ctx.amount = 0.0;
+            }
+          """
+        }
+      }
+    ]
+  }
+  

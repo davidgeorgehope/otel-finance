@@ -59,10 +59,10 @@ DAY1=$(date -d "1 day ago" +%d)     # 1 day ago
 DAY2=$(date -d "2 day ago" +%d)     # 2 day ago
 DAY3=$(date -d "3 days ago" +%d)    # 2 days ago
 DAY4=$(date -d "4 days ago" +%d)    # 3 days ago
-MONTH=$(date -d "today" +%b)        # Current month abbreviation
-MONTH_NUM=$(date -d "today" +%m)    # Current month number
-YEAR=$(date -d "today" +%Y)         # Current year
-YEAR_SHORT=$(date -d "today" +%y)   # Current year in two digits
+MONTH=$(date -d "4 day ago" +%b)        # Current month abbreviation
+MONTH_NUM=$(date -d "4 day ago" +%m)    # Current month number
+YEAR=$(date -d "4 day ago" +%Y)         # Current year
+YEAR_SHORT=$(date -d "4 day ago" +%y)   # Current year in two digits
 
 # Function to adjust dates in files
 adjust_dates() {

@@ -4,7 +4,7 @@ import os
 import requests
 
 # Replace these with your actual Elasticsearch URL and headers
-ELASTICSEARCH_URL = 'http://localhost:9200'
+ELASTICSEARCH_URL = os.environ['ELASTICSEARCH_URL']
 HEADERS = {'Content-Type': 'application/json'}
 
 def load():
